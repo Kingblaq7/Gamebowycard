@@ -16,7 +16,7 @@ from telegram.ext import (
 )
 
 # PASTE YOUR BOT TOKEN HERE
-BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE"
+BOT_TOKEN = "8927128908:AAFrTO8mjIcujJf6juLw96zQmCyAEe6mS1Q"
 
 # Store users waiting for username
 waiting_for_username = set()
