@@ -1,11 +1,11 @@
-
 import os
-from PIL import Image, ImageDraw, ImageFont
+
 from telegram import (
     Update,
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -15,10 +15,8 @@ from telegram.ext import (
     filters
 )
 
-# PASTE YOUR BOT TOKEN HERE
 BOT_TOKEN = "8927128908:AAFrTO8mjIcujJf6juLw96zQmCyAEe6mS1Q"
 
-# Store users waiting for username
 waiting_for_username = set()
 
 
@@ -32,11 +30,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
 
     welcome_text = """
-🎮 Welcome to GAME BOWY
+🎮 Welcome to GAME BWOY
 
 Enter the next generation Play-To-Earn universe 🚀
 
-Complete your KOL details and receive your official GAME BOWY creator card instantly.
+Complete your KOL details and receive your official GAME BWOY creator card instantly.
 """
 
     await update.message.reply_text(
@@ -56,7 +54,7 @@ async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE):
         waiting_for_username.add(query.from_user.id)
 
         await query.message.reply_text(
-            "Send your Twitter username.\n\nExample:\n@crypto_king"
+            "Send your Twitter username.\n\nExample:\nphoenix"
         )
 
 
@@ -68,48 +66,36 @@ async def handle_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if user_id not in waiting_for_username:
         return
 
-    username = update.message.text
+    username = update.message.text.lower().replace("@", "").strip()
 
     waiting_for_username.remove(user_id)
 
-    # Open template image
-    image = Image.open("templates/card.png")
+    image_path = f"templates/{username}.png"
 
-    draw = ImageDraw.Draw(image)
+    # Check if card exists
+    if not os.path.exists(image_path):
 
-    # Font
-    font = ImageFont.truetype("arial.ttf", 50)
+        await update.message.reply_text(
+            "❌ No creator card found for this username."
+        )
 
-    # Text Position
-    x = 220
-    y = 500
+        return
 
-    # Draw username on card
-    draw.text((x, y), username, fill="white", font=font)
-
-    # Save generated image
-    output_path = f"{user_id}.png"
-    image.save(output_path)
-
-    # Caption message
     caption = f"""
-🔥 Welcome to GAME BOWY
+🔥 Welcome to GAME BWOY
 
-Official KOL Creator: {username}
+Official KOL Creator: @{username}
 
 Ready to dominate the battlefield and earn rewards 🚀
 
-#GameBowy #PlayToEarn #GameFi
+#GameBwoy #PlayToEarn #GameFi
 """
 
-    # Send generated card
+    # Send creator card
     await update.message.reply_photo(
-        photo=open(output_path, "rb"),
+        photo=open(image_path, "rb"),
         caption=caption
     )
-
-    # Delete generated image
-    os.remove(output_path)
 
 
 # RUN BOT
@@ -119,5 +105,5 @@ app.add_handler(CommandHandler("start", start))
 app.add_handler(CallbackQueryHandler(button_click))
 app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_username))
 
-print("GAME BOWY Bot is running...")
+print("GAME BWOY Bot is running...")
 app.run_polling()
